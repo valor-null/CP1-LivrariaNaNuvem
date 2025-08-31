@@ -1,27 +1,36 @@
 
-
 FROM eclipse-temurin:21-jdk-jammy AS build
 WORKDIR /workspace/app
 
 
-COPY gradlew .
+COPY gradlew ./
 COPY gradle ./gradle
 COPY settings.gradle .
 COPY build.gradle .
-COPY src ./src
+
 
 RUN chmod +x gradlew
-RUN ./gradlew clean bootJar --no-daemon
+
+COPY src ./src
 
 
-FROM eclipse-temurin:21-jre-jammy
-WORKDIR /app
+RUN --mount=type=cache,target=/root/.gradle \
+    ./gradlew clean bootJar --no-daemon
+
+FROM eclipse-temurin:21-jre-jammy AS runtime
+
 RUN useradd -ms /bin/bash appuser
-USER appuser
+WORKDIR /app
 
-#
-COPY --from=build /workspace/app/build/libs/*SNAPSHOT*.jar /app/app.jar
+COPY --from=build /workspace/app/build/libs/*.jar /app/app.jar
 
 
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -Dfile.encoding=UTF-8 -Duser.timezone=UTC"
+
+
+USER appuser
+
+
+ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar /app/app.jar"]
