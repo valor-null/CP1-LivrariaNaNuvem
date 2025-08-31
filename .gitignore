@@ -1,3 +1,15 @@
+.env
+*.env
+*.env.*
+!.env.example
+
+src/main/resources/application-local.yml
+src/main/resources/application-local.properties
+
+# Logs locais
+*.log
+logs/
+
 HELP.md
 .gradle
 build/
@@ -5,7 +17,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### STS ###
+
 .apt_generated
 .classpath
 .factorypath
@@ -17,7 +29,7 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-### IntelliJ IDEA ###
+
 .idea
 *.iws
 *.iml
@@ -26,12 +38,10 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-### NetBeans ###
-/nbproject/private/
+
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
 .vscode/
